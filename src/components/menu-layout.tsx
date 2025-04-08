@@ -10,6 +10,7 @@ import { FrozenRouter } from "./frozen-router";
 import MenuButtons from "./menu-buttons";
 import { cn } from "@/lib/utils";
 import VerticalChain from "./chain";
+import Rivet from "./rivet";
 
 interface MenuLayoutProps {
   children?: React.ReactNode;
@@ -45,81 +46,6 @@ export function MenuLayout({ children }: MenuLayoutProps) {
       {/* Menu Panel with Chains */}
       <AnimatePresence mode="wait">
         <FrozenRouter>
-          {/* Chains */}
-          {chainsMounted && (
-            <>
-              {/* Left chain */}
-              <motion.div
-                key="left-chain"
-                style={{
-                  position: "absolute",
-                  top: "0",
-                  left: "calc(100% - 28rem + var(--chain-offset, 20px))",
-                  zIndex: 20,
-                  pointerEvents: "none",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  height: "calc(50vh - 450px)",
-                  viewTransitionName: "left-chain",
-                }}
-                initial={{ y: "-100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "-100%" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 100,
-                  damping: 15,
-                  mass: 1,
-                }}
-              >
-                <div className="flex-1 flex flex-col items-center">
-                  <VerticalChain />
-                </div>
-
-                {/* Bottom connector */}
-                <div className="w-10 h-4 p-2 bg-zinc-800 rounded-t-sm border-2 border-gray-800 relative z-20">
-                  <div className="w-4 h-1 bg-gray-400 rounded-full mx-auto"></div>
-                </div>
-              </motion.div>
-
-              {/* Right chain */}
-              <motion.div
-                key="right-chain"
-                style={{
-                  position: "absolute",
-                  top: "0",
-                  right: "calc(4rem + var(--chain-offset, 120px))",
-                  zIndex: 20,
-                  pointerEvents: "none",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  height: "calc(50vh - 450px)",
-                  viewTransitionName: "right-chain",
-                }}
-                initial={{ y: "-100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "-100%" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 100,
-                  damping: 15,
-                  mass: 1,
-                }}
-              >
-                <div className="flex-1 flex flex-col items-center">
-                  <VerticalChain />
-                </div>
-
-                {/* Bottom connector */}
-                <div className="w-10 h-4 p-2 bg-zinc-800 rounded-t-sm border-2 border-gray-800 relative z-20">
-                  <div className="w-4 h-1 bg-gray-400 rounded-full mx-auto"></div>
-                </div>
-              </motion.div>
-            </>
-          )}
-
           {/* Menu Panel */}
           {isMenuVisible && (
             <motion.div
@@ -138,19 +64,122 @@ export function MenuLayout({ children }: MenuLayoutProps) {
               exit={{ y: "-100vh" }}
               transition={{
                 type: "spring",
-                stiffness: 100,
-                damping: 15,
-                mass: 1,
+                stiffness: 110,
+                damping: 12,
+                mass: 0.5,
               }}
             >
+              {/* Chains */}
+              {chainsMounted && (
+                <>
+                  {/* Left chain */}
+                  <motion.div
+                    style={{
+                      position: "absolute",
+                      top: "calc(-50vh + 450px)",
+                      left: "120px",
+                      zIndex: 20,
+                      pointerEvents: "none",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      height: "calc(50vh - 450px)",
+                      viewTransitionName: "left-chain",
+                    }}
+                    initial={{ y: 0 }}
+                    animate={{ y: 0 }}
+                    exit={{ y: 0 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 90,
+                      damping: 15,
+                      mass: 1,
+                    }}
+                  >
+                    <div className="flex-1 flex flex-col items-center">
+                      <VerticalChain />
+                    </div>
+
+                    {/* Bottom connector */}
+                    <div className="w-10 h-4 p-2 bg-zinc-800 rounded-t-sm border-2 border-gray-800 relative z-20">
+                      <div className="w-4 h-1 bg-gray-400 rounded-full mx-auto"></div>
+                    </div>
+                  </motion.div>
+
+                  {/* Right chain */}
+                  <motion.div
+                    style={{
+                      position: "absolute",
+                      top: "calc(-50vh + 450px)",
+                      right: "100px",
+                      zIndex: 20,
+                      pointerEvents: "none",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      height: "calc(50vh - 450px)",
+                      viewTransitionName: "right-chain",
+                    }}
+                    initial={{ y: 0 }}
+                    animate={{ y: 0 }}
+                    exit={{ y: 0 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 90,
+                      damping: 15,
+                      mass: 1,
+                    }}
+                  >
+                    <div className="flex-1 flex flex-col items-center">
+                      <VerticalChain />
+                    </div>
+
+                    {/* Bottom connector */}
+                    <div className="w-10 h-4 p-2 bg-zinc-800 rounded-t-sm border-2 border-gray-800 relative z-20">
+                      <div className="w-4 h-1 bg-gray-400 rounded-full mx-auto"></div>
+                    </div>
+                  </motion.div>
+                </>
+              )}
+
               {/* Main Menu Panel */}
               <div
                 className={cn(
-                  "relative p-[var(--menu-padding)] rounded-[var(--menu-radius)] border-4 border-red-500 bg-gray-800",
+                  "relative p-[var(--menu-padding)] rounded-[var(--menu-radius)] border-4 border-gray-700 bg-gray-800",
                   "bg-[#2b2d2c] shadow-[inset_0_0_10px_rgba(0,0,0,0.8),0_0_15px_rgba(0,0,0,0.7)]",
-                  "[--menu-padding:1rem] [--menu-radius:2rem]"
+                  "[--menu-padding:1.5rem] [--menu-radius:1rem]"
                 )}
               >
+                {/* Corner Rivets */}
+                <Rivet className="absolute top-3 left-2" />
+                <Rivet className="absolute top-3 right-2" />
+                <Rivet className="absolute bottom-4 left-2" />
+                <Rivet className="absolute bottom-4 right-2" />
+
+                {/* Top Edge Rivets */}
+                <Rivet className="absolute top-2 left-[20%]" />
+                <Rivet className="absolute top-2 left-[40%]" />
+                <Rivet className="absolute top-2 left-[60%]" />
+                <Rivet className="absolute top-2 left-[80%]" />
+
+                {/* Bottom Edge Rivets */}
+                <Rivet className="absolute bottom-2 left-[20%]" />
+                <Rivet className="absolute bottom-2 left-[40%]" />
+                <Rivet className="absolute bottom-2 left-[60%]" />
+                <Rivet className="absolute bottom-2 left-[80%]" />
+
+                {/* Left Edge Rivets */}
+                <Rivet className="absolute left-2 top-[20%]" />
+                <Rivet className="absolute left-2 top-[40%]" />
+                <Rivet className="absolute left-2 top-[60%]" />
+                <Rivet className="absolute left-2 top-[80%]" />
+
+                {/* Right Edge Rivets */}
+                <Rivet className="absolute right-2 top-[20%]" />
+                <Rivet className="absolute right-2 top-[40%]" />
+                <Rivet className="absolute right-2 top-[60%]" />
+                <Rivet className="absolute right-2 top-[80%]" />
+
                 {/* Menu Panel */}
                 <div
                   className="rounded-[calc(var(--menu-radius)-var(--menu-padding))] min-h-200 relative z-10 bg-[#221510] backdrop-blur-sm p-8 border-2 border-gray-700 w-full max-w-xl flex flex-col gap-10 shadow-[inset_0_0_10px_10px_rgba(0,0,0,0.9)]"
