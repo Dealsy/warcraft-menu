@@ -1,8 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import Link from "next/link";
+import { motion } from "motion/react";
+import { useExitAnimation } from "@/contexts/exit-animation-context";
 
 type MenuButtonProps = {
   label: string;
@@ -19,9 +19,8 @@ export default function MenuButton({
   href,
   onClick,
 }: MenuButtonProps) {
-  console.log(hasIcon && icon, "hasIcon && icon");
-  console.log(icon, "icon");
-  console.log(hasIcon, "hasIcon");
+  const { handleExit } = useExitAnimation();
+
   const ButtonContent = (
     <div className="w-full mb-4">
       <div className="relative">
@@ -30,7 +29,18 @@ export default function MenuButton({
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
         >
-          <button type="button" onClick={onClick} className="w-full">
+          <button
+            type="button"
+            onClick={
+              href
+                ? (e) => {
+                    e.preventDefault();
+                    handleExit(href);
+                  }
+                : onClick
+            }
+            className="w-full"
+          >
             <div
               className={cn(
                 "bg-blue-700 text-center text-yellow-300 font-warcraft",
@@ -61,10 +71,6 @@ export default function MenuButton({
       </div>
     </div>
   );
-
-  if (href) {
-    return <Link href={href}>{ButtonContent}</Link>;
-  }
 
   return ButtonContent;
 }

@@ -12,7 +12,7 @@ export default function OptionsPage() {
 
   return (
     <Container additionalContent={<MenuLayout />}>
-      <MenuContainer width={680} height={900}>
+      <MenuContainer width={680} height={900} boxHeight="800">
         <h1 className="text-2xl text-yellow-300 font-warcraft mb-8">Options</h1>
         <div className="grid grid-cols-1 gap-8">
           <div className="metal-panel p-6 rounded-lg border-2 border-gray-800">

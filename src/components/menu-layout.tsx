@@ -4,13 +4,13 @@ import type React from "react";
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
-import { FrozenRouter } from "./frozen-router";
 import MenuButtons from "./menu-buttons";
 import { cn } from "@/lib/utils";
 import VerticalChain from "./chain";
 import Rivet from "./rivet";
+import { useExitAnimation } from "@/contexts/exit-animation-context";
 
 interface MenuLayoutProps {
   children?: React.ReactNode;
@@ -19,54 +19,38 @@ interface MenuLayoutProps {
 export function MenuLayout({ children }: MenuLayoutProps) {
   const pathname = usePathname();
   const [isMenuVisible, setIsMenuVisible] = useState(true);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const isHomePage = pathname === "/";
   const [chainsMounted, setChainsMounted] = useState(false);
+  const { exit } = useExitAnimation();
+  const isHomePage = pathname === "/";
 
   // When route changes, animate menu back in
   useEffect(() => {
-    if (!isHomePage) {
-      setChainsMounted(true);
-      const timer = setTimeout(() => {
-        setIsMenuVisible(true);
-        setIsTransitioning(false);
-      }, 300);
-      return () => clearTimeout(timer);
-    } else {
-      setChainsMounted(true);
-      const timer = setTimeout(() => {
-        setIsMenuVisible(true);
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [pathname, isHomePage]);
+    setChainsMounted(true);
+    const timer = setTimeout(() => {
+      setIsMenuVisible(true);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   return (
     <div className="relative h-screen w-full overflow-hidden">
-      {/* Menu Panel with Chains */}
-      <AnimatePresence mode="wait">
-        <FrozenRouter>
-          {/* Menu Panel */}
-          {isMenuVisible && (
+      {/* Content Container */}
+      <div className="relative h-full w-full">
+        {/* Page Content */}
+        <div className="relative h-full z-10">{children}</div>
+
+        {/* Main Menu */}
+        <AnimatePresence mode="wait">
+          {isMenuVisible && !exit && (
             <motion.div
               key="menu-panel"
-              style={{
-                position: "absolute",
-                right: "4rem",
-                top: "calc(50vh - 450px)",
-                transform: "translateY(0)",
-                zIndex: 12,
-                width: "30rem",
-                viewTransitionName: "menu-panel",
-              }}
+              className="absolute right-16 top-[calc(50vh-450px)] z-20 w-[30rem]"
               initial={{ y: "-100vh" }}
               animate={{ y: 0 }}
               exit={{ y: "-100vh" }}
               transition={{
-                type: "spring",
-                stiffness: 110,
-                damping: 12,
-                mass: 0.5,
+                duration: 0.5,
+                ease: "easeInOut",
               }}
             >
               {/* Chains */}
@@ -74,26 +58,17 @@ export function MenuLayout({ children }: MenuLayoutProps) {
                 <>
                   {/* Left chain */}
                   <motion.div
+                    className="absolute top-[calc(-50vh+450px)] left-[120px] pointer-events-none flex flex-col items-center"
                     style={{
-                      position: "absolute",
-                      top: "calc(-50vh + 450px)",
-                      left: "120px",
-                      zIndex: 20,
-                      pointerEvents: "none",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
                       height: "calc(50vh - 450px)",
                       viewTransitionName: "left-chain",
                     }}
                     initial={{ y: 0 }}
                     animate={{ y: 0 }}
-                    exit={{ y: 0 }}
+                    exit={{ y: "-100vh" }}
                     transition={{
-                      type: "spring",
-                      stiffness: 90,
-                      damping: 15,
-                      mass: 1,
+                      duration: 0.5,
+                      ease: "easeInOut",
                     }}
                   >
                     <div className="flex-1 flex flex-col items-center">
@@ -101,33 +76,22 @@ export function MenuLayout({ children }: MenuLayoutProps) {
                     </div>
 
                     {/* Bottom connector */}
-                    <div className="w-10 h-4 p-2 bg-zinc-800 rounded-t-sm border-2 border-gray-800 relative z-20">
-                      <div className="w-4 h-1 bg-gray-400 rounded-full mx-auto"></div>
-                    </div>
+                    <div className="w-10 h-4 p-2 bg-zinc-800 rounded-t-sm border-2 border-gray-800 relative"></div>
                   </motion.div>
 
                   {/* Right chain */}
                   <motion.div
+                    className="absolute top-[calc(-50vh+450px)] right-[100px] pointer-events-none flex flex-col items-center"
                     style={{
-                      position: "absolute",
-                      top: "calc(-50vh + 450px)",
-                      right: "100px",
-                      zIndex: 20,
-                      pointerEvents: "none",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
                       height: "calc(50vh - 450px)",
                       viewTransitionName: "right-chain",
                     }}
                     initial={{ y: 0 }}
                     animate={{ y: 0 }}
-                    exit={{ y: 0 }}
+                    exit={{ y: "-100vh" }}
                     transition={{
-                      type: "spring",
-                      stiffness: 90,
-                      damping: 15,
-                      mass: 1,
+                      duration: 0.5,
+                      ease: "easeInOut",
                     }}
                   >
                     <div className="flex-1 flex flex-col items-center">
@@ -135,9 +99,7 @@ export function MenuLayout({ children }: MenuLayoutProps) {
                     </div>
 
                     {/* Bottom connector */}
-                    <div className="w-10 h-4 p-2 bg-zinc-800 rounded-t-sm border-2 border-gray-800 relative z-20">
-                      <div className="w-4 h-1 bg-gray-400 rounded-full mx-auto"></div>
-                    </div>
+                    <div className="w-10 h-4 p-2 bg-zinc-800 rounded-t-sm border-2 border-gray-800 relative"></div>
                   </motion.div>
                 </>
               )}
@@ -182,7 +144,7 @@ export function MenuLayout({ children }: MenuLayoutProps) {
 
                 {/* Menu Panel */}
                 <div
-                  className="rounded-[calc(var(--menu-radius)-var(--menu-padding))] min-h-200 relative z-10 bg-[#221510] backdrop-blur-sm p-8 border-2 border-gray-700 w-full max-w-xl flex flex-col gap-10 shadow-[inset_0_0_10px_10px_rgba(0,0,0,0.9)]"
+                  className="rounded-[calc(var(--menu-radius)-var(--menu-padding))] min-h-200 relative bg-[#221510] backdrop-blur-sm p-8 border-2 border-gray-700 w-full max-w-xl flex flex-col gap-10 shadow-[inset_0_0_10px_10px_rgba(0,0,0,0.9)]"
                   style={{
                     backgroundImage: `
                       repeating-linear-gradient(
@@ -195,43 +157,25 @@ export function MenuLayout({ children }: MenuLayoutProps) {
                     `,
                   }}
                 >
-                  {/* Logo */}
-                  <div className="z-10 w-64 mx-auto">
-                    <Image
-                      src="/images/warcraft_logo.webp"
-                      alt="Warcraft III Logo"
-                      width={256}
-                      height={128}
-                      className="object-contain"
-                    />
-                  </div>
+                  {isHomePage && (
+                    <div className="w-64 mx-auto">
+                      <Image
+                        src="/images/warcraft_logo.webp"
+                        alt="Warcraft III Logo"
+                        width={256}
+                        height={128}
+                        className="object-contain"
+                      />
+                    </div>
+                  )}
 
                   <MenuButtons />
                 </div>
               </div>
             </motion.div>
           )}
-        </FrozenRouter>
-      </AnimatePresence>
-
-      {/* Page Content */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={pathname}
-          style={{
-            position: "relative",
-            zIndex: 5,
-            height: "100%",
-            viewTransitionName: "page-content",
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {!isTransitioning && children}
-        </motion.div>
-      </AnimatePresence>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
