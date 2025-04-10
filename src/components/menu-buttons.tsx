@@ -41,7 +41,11 @@ const DEFAULT_ROUTE: RouteConfig[] = [
   { label: "Back to Main Menu", href: "/" },
 ];
 
-export default function MenuButtons() {
+export default function MenuButtons({
+  setExit,
+}: {
+  setExit: (exit: boolean) => void;
+}) {
   const pathname = usePathname();
   const buttons = MENU_ROUTES[pathname] ?? DEFAULT_ROUTE;
 
@@ -49,6 +53,7 @@ export default function MenuButtons() {
     <div className="space-y-4">
       {buttons.map((button) => (
         <MenuButton
+          setExit={setExit}
           key={button.href}
           label={button.label}
           href={button.href}

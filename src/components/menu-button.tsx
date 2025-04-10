@@ -1,8 +1,10 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 
 type MenuButtonProps = {
   label: string;
@@ -10,6 +12,7 @@ type MenuButtonProps = {
   icon?: React.ReactNode;
   href?: string;
   onClick?: () => void;
+  setExit?: (exit: boolean) => void;
 };
 
 export default function MenuButton({
@@ -18,10 +21,24 @@ export default function MenuButton({
   icon,
   href,
   onClick,
+  setExit,
 }: MenuButtonProps) {
-  console.log(hasIcon && icon, "hasIcon && icon");
-  console.log(icon, "icon");
-  console.log(hasIcon, "hasIcon");
+  const router = useRouter();
+
+  const handleClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!href || !setExit) return;
+
+    // Start exit animation
+    setExit(true);
+
+    // Wait for animation to complete
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Navigate
+    router.push(href);
+  };
+
   const ButtonContent = (
     <div className="w-full mb-4">
       <div className="relative">
@@ -30,7 +47,11 @@ export default function MenuButton({
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
         >
-          <button type="button" onClick={onClick} className="w-full">
+          <button
+            type="button"
+            onClick={href ? handleClick : onClick}
+            className="w-full"
+          >
             <div
               className={cn(
                 "bg-blue-700 text-center text-yellow-300 font-warcraft",
@@ -63,7 +84,11 @@ export default function MenuButton({
   );
 
   if (href) {
-    return <Link href={href}>{ButtonContent}</Link>;
+    return (
+      <Link href={href} onClick={() => setExit?.(true)}>
+        {ButtonContent}
+      </Link>
+    );
   }
 
   return ButtonContent;

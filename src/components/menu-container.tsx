@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import VerticalChain from "./chain";
 import Rivet from "./rivet";
@@ -33,10 +33,8 @@ export default function MenuContainer({
       animate={{ y: 0 }}
       exit={{ y: "-100vh" }}
       transition={{
-        type: "spring",
-        stiffness: 110,
-        damping: 12,
-        mass: 0.5,
+        duration: 0.5,
+        ease: "easeInOut",
       }}
     >
       {/* Chains */}
@@ -57,12 +55,10 @@ export default function MenuContainer({
           }}
           initial={{ y: 0 }}
           animate={{ y: 0 }}
-          exit={{ y: 0 }}
+          exit={{ y: "-100vh" }}
           transition={{
-            type: "spring",
-            stiffness: 110,
-            damping: 12,
-            mass: 0.5,
+            duration: 0.5,
+            ease: "easeInOut",
           }}
         >
           <div className="flex-1 flex flex-col items-center">
@@ -91,12 +87,10 @@ export default function MenuContainer({
           }}
           initial={{ y: 0 }}
           animate={{ y: 0 }}
-          exit={{ y: 0 }}
+          exit={{ y: "-100vh" }}
           transition={{
-            type: "spring",
-            stiffness: 110,
-            damping: 12,
-            mass: 0.5,
+            duration: 0.5,
+            ease: "easeInOut",
           }}
         >
           <div className="flex-1 flex flex-col items-center">
