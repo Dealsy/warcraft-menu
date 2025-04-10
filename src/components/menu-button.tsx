@@ -2,9 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useExitAnimation } from "@/contexts/exit-animation-context";
 
 type MenuButtonProps = {
   label: string;
@@ -12,7 +10,6 @@ type MenuButtonProps = {
   icon?: React.ReactNode;
   href?: string;
   onClick?: () => void;
-  setExit?: (exit: boolean) => void;
 };
 
 export default function MenuButton({
@@ -21,23 +18,8 @@ export default function MenuButton({
   icon,
   href,
   onClick,
-  setExit,
 }: MenuButtonProps) {
-  const router = useRouter();
-
-  const handleClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!href || !setExit) return;
-
-    // Start exit animation
-    setExit(true);
-
-    // Wait for animation to complete
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // Navigate
-    router.push(href);
-  };
+  const { handleExit } = useExitAnimation();
 
   const ButtonContent = (
     <div className="w-full mb-4">
@@ -49,7 +31,14 @@ export default function MenuButton({
         >
           <button
             type="button"
-            onClick={href ? handleClick : onClick}
+            onClick={
+              href
+                ? (e) => {
+                    e.preventDefault();
+                    handleExit(href);
+                  }
+                : onClick
+            }
             className="w-full"
           >
             <div
@@ -82,14 +71,6 @@ export default function MenuButton({
       </div>
     </div>
   );
-
-  if (href) {
-    return (
-      <Link href={href} onClick={() => setExit?.(true)}>
-        {ButtonContent}
-      </Link>
-    );
-  }
 
   return ButtonContent;
 }
